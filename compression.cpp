@@ -124,9 +124,13 @@ int main() {
     std::cout << "Enter the name of the file to compress: ";
     std::cin >> filename;
 
-
     std::string mergedInput = mergeLinesWithMarker(filename);
 
+    if (mergedInput.empty()) { // error handling
+        std::cerr << "Error: Unable to process the file. Exiting..." << std::endl;
+        return 1;
+    }
+    
     std::unordered_map<char, int> freqMap = calculateFrequencies(mergedInput);
 
     HuffmanNode* root = buildHuffmanTree(freqMap);
