@@ -25,7 +25,8 @@ struct Compare {
 // Function to calculate the frequency of characters in the input file
 std::unordered_map<char, int> calculateFrequencies(const std::string& mergedInput) {
     std::unordered_map<char, int> freqMap;
-    for (char ch : mergedInput) {
+    for (size_t i = 0; i < mergedInput.size(); ++i) {
+        char ch = mergedInput[i];
         freqMap[ch]++;
     }
     return freqMap;
@@ -35,8 +36,8 @@ std::unordered_map<char, int> calculateFrequencies(const std::string& mergedInpu
 HuffmanNode* buildHuffmanTree(const std::unordered_map<char, int>& freqMap) {
     std::priority_queue<HuffmanNode*, std::vector<HuffmanNode*>, Compare> pq;
 
-    for (auto pair : freqMap) {
-        pq.push(new HuffmanNode(pair.first, pair.second));
+    for (std::unordered_map<char, int>::const_iterator it = freqMap.begin(); it != freqMap.end(); ++it) {
+        pq.push(new HuffmanNode(it->first, it->second));
     }
 
     while (pq.size() != 1) {
@@ -65,11 +66,11 @@ void generateCodes(HuffmanNode* root, std::string code, std::unordered_map<char,
     generateCodes(root->right, code + "1", huffmanCode);
 }
 
-// Function to save Huffman codes to seperate file
+// Function to save Huffman codes to separate file
 void saveHuffmanCodes(const std::unordered_map<char, std::string>& huffmanCode, const std::string& filename) {
     std::ofstream outFile(filename);
-    for (const auto& pair : huffmanCode) {
-        outFile << pair.first << " " << pair.second << "\n";
+    for (std::unordered_map<char, std::string>::const_iterator it = huffmanCode.begin(); it != huffmanCode.end(); ++it) {
+        outFile << it->first << " " << it->second << "\n";
     }
     outFile.close();
 }
@@ -90,7 +91,8 @@ std::string mergeLinesWithMarker(const std::string& filename) {
 // Function to encode the merged input using Huffman codes
 std::string encodeMergedInput(const std::string& mergedInput, const std::unordered_map<char, std::string>& huffmanCode) {
     std::string encodedStr = "";
-    for (char ch : mergedInput) {
+    for (size_t i = 0; i < mergedInput.size(); ++i) {
+        char ch = mergedInput[i];
         encodedStr += huffmanCode.at(ch);
     }
     return encodedStr;
@@ -118,7 +120,10 @@ void writeCompressedFile(const std::string& outFilename, std::string encodedStr)
 }
 
 int main() {
-    std::string filename = "input.txt";
+    std::string filename;
+    std::cout << "Enter the name of the file to compress: ";
+    std::cin >> filename;
+
 
     std::string mergedInput = mergeLinesWithMarker(filename);
 
@@ -140,3 +145,4 @@ int main() {
 
     return 0;
 }
+
