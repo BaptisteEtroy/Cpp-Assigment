@@ -50,4 +50,39 @@ void decodeFile(const std::string& inFilename, const std::unordered_map<std::str
 
     // Decode the bitstream using the Huffman codes
     for (char bit : encodedStr) {
-        currentCode += bit;`
+        currentCode += bit;
+
+        // Check if the current code matches any Huffman code
+        if (huffmanCode.find(currentCode) != huffmanCode.end()) {
+            char decodedChar = huffmanCode.at(currentCode);
+            decodedString += decodedChar;
+            currentCode = "";
+        }
+    }
+
+    // Now replace "/n" with an actual newline character
+    size_t pos = 0;
+    while ((pos = decodedString.find("/n", pos)) != std::string::npos) {
+        decodedString.replace(pos, 2, "\n");
+    }
+
+    // Write the final decoded string to the output file
+    outFile << decodedString;
+
+    inFile.close();
+    outFile.close();
+}
+
+int main() {
+    std::string compressedFilename = "compressed.bin";
+    std::string codeMapFilename = "huffman_codes.txt";
+    std::string outputFilename = "decompressed.txt";
+
+    std::unordered_map<std::string, char> huffmanCode = loadHuffmanCodes(codeMapFilename);
+
+    decodeFile(compressedFilename, huffmanCode, outputFilename);
+
+    std::cout << "File decompressed successfully!" << std::endl;
+
+    return 0;
+}
